@@ -1,7 +1,7 @@
 FPPolygonProps
 ==============
 
-[FlashPunk] Draw and test a polygon (isSimple, isConvex, isCCW).
+[FlashPunk] Draw and test a polygon (isSimple, isConvex, isCCW). [swf](https://dl.dropboxusercontent.com/u/32864004/dev/FPDemo/FPPolygonProps.swf)
 
 Simple interactive drawing of polygons.
 
