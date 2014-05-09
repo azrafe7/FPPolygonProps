@@ -52,7 +52,7 @@ package
 			
 			FP.log("Test polygon props...");
 			
-			Input.mouseCursor = "hide";
+			//Input.mouseCursor = "hide";
 		}
 		
 		override public function update():void 
