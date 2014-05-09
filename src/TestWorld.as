@@ -27,6 +27,7 @@ package
 		
 		
 		private var lastPoint:Point;
+		private var topLeft:Point;
 		private var newPoly:Vector.<Point> = new Vector.<Point>();
 		private var poly:Vector.<Point> = new Vector.<Point>();
 
@@ -67,6 +68,7 @@ package
 				if (close) {
 					poly.length = 0;
 					lastPoint = null;
+					topLeft = null;
 					text.text = INFO;
 					close = false;
 				}
@@ -84,11 +86,17 @@ package
 				var simple:Boolean = isSimple(poly); 
 				var convex:Boolean = isConvex(poly); 
 				var ccw:Boolean = isCCW(poly);
+				topLeft = new Point(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
+				for (var i:int = 0; i < poly.length; i++) {
+					if (poly[i].x < topLeft.x) topLeft.x = poly[i].x;
+					if (poly[i].y < topLeft.y) topLeft.y = poly[i].y;
+				}
 				text.text = 
 					//"dupPoints\t: " + (dupPoints == null ? "none" : dupPoints) + "\n" +
 					"simple\t\t: " + simple + "\n" +
 					"convex\t\t: " + convex + (!simple ? " (not reliable since poly is not simple)" : "") + "\n" +
-					"ccw\t\t\t: " + ccw;
+					"ccw\t\t\t: " + ccw + "\n" +
+					"topLeft\t: " + topLeft;
 				trace(text.text.replace(/\t/g, ""));
 			}
 		}
@@ -102,20 +110,32 @@ package
 				for (var i:int = 0; i < poly.length - 1; i++) {
 					var p1:Point = poly[i];
 					var p2:Point = poly[i + 1];
-					Draw.linePlus(p1.x, p1.y, p2.x, p2.y, 0xFFFFFFFF, 1);
-					Draw.circlePlus(p1.x, p1.y, 3, i == 0 ? 0xffff00 : 0x00ff00, 1, false);
-					Draw.circlePlus(p2.x, p2.y, 3, 0x00ff00, 1, false);
+					if ("arrowPlus" in Draw) {
+						Draw["arrowPlus"](p1.x, p1.y, p2.x, p2.y, 0xFFFFFFFF, 1, 1, 20, 10);
+					} else {
+						Draw.linePlus(p1.x, p1.y, p2.x, p2.y, 0xFFFFFFFF, 1);
+					}
+					Draw.circlePlus(p1.x, p1.y, 3, i == 0 ? 0xFFFFF00 : 0x00FF00, 1, false);
+					Draw.circlePlus(p2.x, p2.y, 3, 0x00FF00, 1, false);
 				}
-				if (close) Draw.linePlus(poly[0].x, poly[0].y, poly[poly.length - 1].x, poly[poly.length - 1].y, 0xFFFFFFFF, 1);
+				if (close) {
+					if ("arrowPlus" in Draw) {
+						Draw["arrowPlus"](poly[poly.length - 1].x, poly[poly.length - 1].y, poly[0].x, poly[0].y, 0xFFFFFFFF, 1, 1, 20, 10);
+					} else {
+						Draw.linePlus(poly[poly.length - 1].x, poly[poly.length - 1].y, poly[0].x, poly[0].y, 0xFFFFFFFF, 1);
+					}
+				}
 			} else if (poly.length == 1) {
-				Draw.circlePlus(poly[0].x, poly[0].y, 3, 0xffff00, 1, false);
+				Draw.circlePlus(poly[0].x, poly[0].y, 3, 0xFFFF00, 1, false);
 			}
 
 			if (lastPoint != null) {
-				Draw.linePlus(lastPoint.x, lastPoint.y, Input.mouseX, Input.mouseY, 0xFFFFFFFF);
+				Draw.linePlus(lastPoint.x, lastPoint.y, Input.mouseX, Input.mouseY, 0xFFFFFFFF, .25);
 			}
 			
-			Draw.circlePlus(Input.mouseX, Input.mouseY, 3, 0xff0000, 1, false);
+			Draw.circlePlus(Input.mouseX, Input.mouseY, 3.5, 0xFF0000, 1, false);
+			
+			if (topLeft != null) Draw.circlePlus(topLeft.x, topLeft.y, 4, 0x00FF00, 1, false, 2);
 		}
 
 		
